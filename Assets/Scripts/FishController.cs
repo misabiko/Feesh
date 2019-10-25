@@ -5,10 +5,13 @@ using UnityEngine;
 public class FishController : MonoBehaviour {
 	public float maxSpeed;
 	public float neighborRadius = 1f;
+
+	public float avoidanceRadius;
 	//public float viewAngle = 3f;
 
 	Collider fishCollider;
 	float squareMaxSpeed;
+	float squareAvoidanceRadius;
 
 	const float VBound = 15f;
 	const float HBound = 14f;
@@ -18,33 +21,68 @@ public class FishController : MonoBehaviour {
 	void Start() {
 		fishCollider = GetComponent<Collider>();
 		squareMaxSpeed = maxSpeed * maxSpeed;
+		squareAvoidanceRadius = avoidanceRadius * avoidanceRadius;
 	}
 
 	void Update() {
 		List<Transform> neighbors = getNeighbors();
 		
-		Vector3 velocity = calculateCohesion(neighbors);
+		Vector3 velocity = calculateAvoidance(neighbors);
 
 		if (velocity.sqrMagnitude > squareMaxSpeed)
 			velocity = velocity.normalized * maxSpeed;
 		
 		move(velocity);
-
-		//checkBounds();
 	}
 
 	Vector3 calculateCohesion(List<Transform> neighbors) {
 		Vector3 cohesionMove = Vector3.zero;
 
-		if (neighbors.Count > 0) {
-			foreach (Transform neighbor in neighbors)
-				cohesionMove += neighbor.position;
-
-			cohesionMove /= neighbors.Count;
-			cohesionMove -= transform.position;
-		}
+		//if no neighbors, return no adjustments
+		if (neighbors.Count <= 0) return cohesionMove;
+		
+		//average every neighbor positions
+		foreach (Transform neighbor in neighbors)
+			cohesionMove += neighbor.position;
+		cohesionMove /= neighbors.Count;
+		
+		//create offset from pos
+		cohesionMove -= transform.position;
 
 		return cohesionMove;
+	}
+
+	Vector3 calculateAlignement(List<Transform> neighbors) {
+		//if no neighbors, keep direction (move at speed 1)
+		if (neighbors.Count <= 0) return transform.forward;
+		
+		//average every neighbor directions
+		Vector3 alignementMove = Vector3.zero;
+		foreach (Transform neighbor in neighbors)
+			alignementMove += neighbor.transform.forward;
+		alignementMove /= neighbors.Count;
+
+		return alignementMove;
+	}
+
+	Vector3 calculateAvoidance(List<Transform> neighbors) {
+		Vector3 avoidanceMove = Vector3.zero;
+
+		//if no neighbors, return no adjustments
+		if (neighbors.Count <= 0) return avoidanceMove;
+		
+		//average every neighbor positions
+		int numAvoids = 0;
+		foreach (Transform neighbor in neighbors)
+			if (Vector3.SqrMagnitude(neighbor.position - transform.position) < squareAvoidanceRadius) {
+				numAvoids++;
+				avoidanceMove += transform.position - neighbor.position;
+			}
+
+		if (numAvoids > 0)
+			avoidanceMove /= numAvoids;
+
+		return avoidanceMove;
 	}
 
 	void move(Vector3 velocity) {
