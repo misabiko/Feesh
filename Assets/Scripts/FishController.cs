@@ -4,10 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class FishController : MonoBehaviour {
 	public float maxSpeed;
+	public float driveFactor;
 	public float neighborRadius = 1f;
-
 	public float avoidanceRadius;
 	//public float viewAngle = 3f;
+
+	public float cohesionWeight;
+	public float alignementWeight;
+	public float avoidanceWeight;
 
 	Collider fishCollider;
 	float squareMaxSpeed;
@@ -26,8 +30,13 @@ public class FishController : MonoBehaviour {
 
 	void Update() {
 		List<Transform> neighbors = getNeighbors();
-		
-		Vector3 velocity = calculateAvoidance(neighbors);
+
+		Vector3 velocity =
+			weightoutMove(calculateCohesion(neighbors), cohesionWeight) +
+			weightoutMove(calculateAlignement(neighbors), alignementWeight) +
+			weightoutMove(calculateAvoidance(neighbors), avoidanceWeight);
+
+		velocity *= driveFactor;
 
 		if (velocity.sqrMagnitude > squareMaxSpeed)
 			velocity = velocity.normalized * maxSpeed;
@@ -85,7 +94,16 @@ public class FishController : MonoBehaviour {
 		return avoidanceMove;
 	}
 
+	Vector3 weightoutMove(Vector3 velocity, float weight) {
+		Vector3 move = velocity * weight;
+		if (move.sqrMagnitude > weight * weight)
+			move = move.normalized * weight;
+
+		return move;
+	}
+
 	void move(Vector3 velocity) {
+		transform.forward = velocity;
 		transform.position += Time.deltaTime * velocity;
 	}
 

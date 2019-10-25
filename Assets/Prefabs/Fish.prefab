@@ -59,8 +59,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 5
-  neighborRadius: 1
+  driveFactor: 10
+  neighborRadius: 1.5
   avoidanceRadius: 0.5
+  cohesionWeight: 1
+  alignementWeight: 1
+  avoidanceWeight: 2
 --- !u!1 &100232192163989216
 GameObject:
   m_ObjectHideFlags: 0
