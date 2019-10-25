@@ -61,10 +61,14 @@ MonoBehaviour:
   maxSpeed: 5
   driveFactor: 10
   neighborRadius: 1.5
-  avoidanceRadius: 0.5
-  cohesionWeight: 1
-  alignementWeight: 1
-  avoidanceWeight: 2
+  cohesionWeight: 4
+  smoothTime: 1
+  alignementWeight: 0.5
+  avoidanceWeight: 1
+  avoidanceRadius: 1
+  stayInRadiusWeight: 0.1
+  center: {x: 0, y: 0, z: 0}
+  radius: 30
 --- !u!1 &100232192163989216
 GameObject:
   m_ObjectHideFlags: 0

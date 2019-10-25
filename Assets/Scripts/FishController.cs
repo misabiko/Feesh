@@ -6,12 +6,20 @@ public class FishController : MonoBehaviour {
 	public float maxSpeed;
 	public float driveFactor;
 	public float neighborRadius = 1f;
-	public float avoidanceRadius;
 	//public float viewAngle = 3f;
 
 	public float cohesionWeight;
+	public float smoothTime = 0.5f;
+	Vector3 currentVelocity;
+	
 	public float alignementWeight;
+	
 	public float avoidanceWeight;
+	public float avoidanceRadius;
+
+	public float stayInRadiusWeight;
+	public Vector3 center;
+	public float radius = 15f;
 
 	Collider fishCollider;
 	float squareMaxSpeed;
@@ -32,9 +40,10 @@ public class FishController : MonoBehaviour {
 		List<Transform> neighbors = getNeighbors();
 
 		Vector3 velocity =
-			weightoutMove(calculateCohesion(neighbors), cohesionWeight) +
+			weightoutMove(calculateSteeredCohesion(neighbors), cohesionWeight) +
 			weightoutMove(calculateAlignement(neighbors), alignementWeight) +
-			weightoutMove(calculateAvoidance(neighbors), avoidanceWeight);
+			weightoutMove(calculateAvoidance(neighbors), avoidanceWeight) + 
+			weightoutMove(calculateStayInRadius(), stayInRadiusWeight);
 
 		velocity *= driveFactor;
 
@@ -57,6 +66,24 @@ public class FishController : MonoBehaviour {
 		
 		//create offset from pos
 		cohesionMove -= transform.position;
+
+		return cohesionMove;
+	}
+
+	Vector3 calculateSteeredCohesion(List<Transform> neighbors) {
+		Vector3 cohesionMove = Vector3.zero;
+
+		//if no neighbors, return no adjustments
+		if (neighbors.Count <= 0) return cohesionMove;
+		
+		//average every neighbor positions
+		foreach (Transform neighbor in neighbors)
+			cohesionMove += neighbor.position;
+		cohesionMove /= neighbors.Count;
+		
+		//create offset from pos
+		cohesionMove -= transform.position;
+		cohesionMove = Vector3.SmoothDamp(transform.forward, cohesionMove, ref currentVelocity, smoothTime);
 
 		return cohesionMove;
 	}
@@ -92,6 +119,16 @@ public class FishController : MonoBehaviour {
 			avoidanceMove /= numAvoids;
 
 		return avoidanceMove;
+	}
+
+	Vector3 calculateStayInRadius() {
+		Vector3 centerOffset = center - transform.position;
+		float t = centerOffset.magnitude / radius;
+
+		if (t < 0.9f)
+			return Vector3.zero;
+
+		return t * t * centerOffset;
 	}
 
 	Vector3 weightoutMove(Vector3 velocity, float weight) {
