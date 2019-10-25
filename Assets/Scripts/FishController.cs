@@ -48,7 +48,7 @@ public class FishController : MonoBehaviour {
 	}
 
 	void move(Vector3 velocity) {
-		transform.position += velocity;
+		transform.position += Time.deltaTime * velocity;
 	}
 
 	List<Transform> getNeighbors() {
