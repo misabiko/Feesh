@@ -58,12 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a5149c7e379c7d4784daf0593f2c5ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  viewAngle: 111.48
-  rotation: 0
-  from: {x: 0, y: 0, z: 1}
-  vBound: 11
-  hBound: 18
+  speed: 0
+  neighborRadius: 1
 --- !u!1 &100232192163989216
 GameObject:
   m_ObjectHideFlags: 0
