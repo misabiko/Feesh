@@ -3,11 +3,12 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 public class FishController : MonoBehaviour {
-	public float speed = 1f;
+	public float maxSpeed;
 	public float neighborRadius = 1f;
 	//public float viewAngle = 3f;
 
 	Collider fishCollider;
+	float squareMaxSpeed;
 
 	const float VBound = 15f;
 	const float HBound = 14f;
@@ -16,15 +17,38 @@ public class FishController : MonoBehaviour {
 
 	void Start() {
 		fishCollider = GetComponent<Collider>();
+		squareMaxSpeed = maxSpeed * maxSpeed;
 	}
 
 	void Update() {
-		transform.Translate(Time.deltaTime * speed * transform.forward, Space.World);
-
-		checkBounds();
-
 		List<Transform> neighbors = getNeighbors();
-		GetComponentInChildren<Renderer>().material.color = Color.Lerp(Color.white, Color.red, neighbors.Count / 6f);
+		
+		Vector3 velocity = calculateCohesion(neighbors);
+
+		if (velocity.sqrMagnitude > squareMaxSpeed)
+			velocity = velocity.normalized * maxSpeed;
+		
+		move(velocity);
+
+		//checkBounds();
+	}
+
+	Vector3 calculateCohesion(List<Transform> neighbors) {
+		Vector3 cohesionMove = Vector3.zero;
+
+		if (neighbors.Count > 0) {
+			foreach (Transform neighbor in neighbors)
+				cohesionMove += neighbor.position;
+
+			cohesionMove /= neighbors.Count;
+			cohesionMove -= transform.position;
+		}
+
+		return cohesionMove;
+	}
+
+	void move(Vector3 velocity) {
+		transform.position += velocity;
 	}
 
 	List<Transform> getNeighbors() {

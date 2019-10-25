@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+  maxSpeed: 5
   neighborRadius: 1
 --- !u!1 &100232192163989216
 GameObject:
