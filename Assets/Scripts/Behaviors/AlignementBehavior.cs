@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Flock/Behavior/Alignement")]
-public class AlignementBehavior : FlockBehavior {
+public class AlignementBehavior : FilteredFlockBehavior {
 	public override Vector3 calculateMove(FlockAgent agent, List<Transform> context, Flock flock) {
 		//if no neighbors, maintain current movement
 		if (context.Count == 0)
@@ -10,9 +10,10 @@ public class AlignementBehavior : FlockBehavior {
 		
 		//average all directions
 		Vector3 alignementMove = Vector3.zero;
-		foreach (Transform item in context)
+		List<Transform> filteredContext = (filter == null) ? context : filter.filter(agent, context);
+		foreach (Transform item in filteredContext)
 			alignementMove += item.transform.forward;
-		alignementMove /= context.Count;
+		alignementMove /= filteredContext.Count;
 
 		return alignementMove;
 	}
