@@ -12,6 +12,9 @@ public class AvoidanceBehavior : FilteredFlockBehavior {
 		Vector3 avoidanceMove = Vector3.zero;
 		int numAvoids = 0;
 		List<Transform> filteredContext = (filter == null) ? context : filter.filter(agent, context);
+		if (filteredContext.Count == 0)
+			return Vector3.zero;
+
 		foreach (Transform item in filteredContext)
 			if (Vector3.SqrMagnitude(item.position - agent.transform.position) < flock.SquareAvoidanceRadius) {
 				numAvoids++;
@@ -19,7 +22,7 @@ public class AvoidanceBehavior : FilteredFlockBehavior {
 			}
 		if (numAvoids > 0)
 			avoidanceMove /= numAvoids;
-
+		
 		return avoidanceMove;
 	}
 }

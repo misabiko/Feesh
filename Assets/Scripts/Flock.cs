@@ -1,4 +1,4 @@
-﻿	using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -47,7 +47,7 @@ public class Flock : MonoBehaviour {
 	void Update() {
 		foreach (FlockAgent agent in agents) {
 			List<Transform> context = getNearbyObjects(agent);
-			
+
 			Vector3 move = behavior.calculateMove(agent, context, this);
 			move *= driveFactor;
 			if (move.sqrMagnitude > squareMaxSpeed)

@@ -11,6 +11,9 @@ public class CohesionBehavior : FilteredFlockBehavior {
 		//average all points
 		Vector3 cohesionMove = Vector3.zero;
 		List<Transform> filteredContext = (filter == null) ? context : filter.filter(agent, context);
+		if (filteredContext.Count == 0)
+			return Vector3.zero;
+
 		foreach (Transform item in filteredContext)
 			cohesionMove += item.position;
 		cohesionMove /= filteredContext.Count;

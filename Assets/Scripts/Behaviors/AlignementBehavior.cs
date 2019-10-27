@@ -11,6 +11,9 @@ public class AlignementBehavior : FilteredFlockBehavior {
 		//average all directions
 		Vector3 alignementMove = Vector3.zero;
 		List<Transform> filteredContext = (filter == null) ? context : filter.filter(agent, context);
+		if (filteredContext.Count == 0)
+			return agent.transform.forward;
+		
 		foreach (Transform item in filteredContext)
 			alignementMove += item.transform.forward;
 		alignementMove /= filteredContext.Count;
