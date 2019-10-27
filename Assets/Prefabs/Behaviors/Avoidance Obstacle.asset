@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc9ed0c13e33de947b9018f9e0a54b3c, type: 3}
-  m_Name: Avoidance
+  m_Name: Avoidance Obstacle
   m_EditorClassIdentifier: 
-  filter: {fileID: 11400000, guid: 046227fd2c599814ca3a78f6098d73ed, type: 2}
-  steered: 1
+  filter: {fileID: 11400000, guid: 6a5c437b81db0304997e8732d9296bb2, type: 2}
   agentSmoothTime: 0.1
