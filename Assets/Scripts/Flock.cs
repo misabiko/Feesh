@@ -30,17 +30,8 @@ public class Flock : MonoBehaviour {
 		squareAvoidanceRadius = avoidanceRadiusMultiplier * avoidanceRadiusMultiplier;
 
 		for (int i = 0; i < startingCount; i++) {
-			Vector2 randomPoint = Random.insideUnitCircle * startingCount * agentDensity;
-			FlockAgent newAgent = Instantiate(
-				agentPrefab,
-				new Vector3(randomPoint.x, 0, randomPoint.y),
-				quaternion.Euler(Vector3.up * Random.Range(0f, 360f)),
-				transform
-			);
-
-			newAgent.name = "Agent " + i;
-			newAgent.initialize(this);
-			agents.Add(newAgent);
+			Vector2 randomPoint = agentDensity * startingCount * Random.insideUnitCircle;
+			spawnAgent(new Vector3(randomPoint.x, 0, randomPoint.y), "Agent " + i);
 		}
 	}
 
@@ -54,6 +45,19 @@ public class Flock : MonoBehaviour {
 				move = move.normalized * maxSpeed;
 			agent.move(move);
 		}
+	}
+
+	void spawnAgent(Vector3 pos, string name) {
+		FlockAgent newAgent = Instantiate(
+			agentPrefab,
+			pos,
+			quaternion.Euler(Vector3.up * Random.Range(0f, 360f)),
+			transform
+		);
+
+		newAgent.name = name;
+		newAgent.initialize(this);
+		agents.Add(newAgent);
 	}
 
 	List<Transform> getNearbyObjects(FlockAgent agent) {
